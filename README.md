@@ -96,6 +96,9 @@ Key functions include:
 ## Conclusion
 This project demonstrates a practical approach to intelligent classroom energy management using sensor-based automation. By activating electrical loads only when required, the system reduces energy waste and supports sustainable energy usage in educational institutions.
 
+## 🎥 Demo Video
+[Watch the demo video on Google Drive](https://drive.google.com/file/d/1ALiUKS7cBLk9zxlZeeRe2NPX5MbHXHNt/view?usp=drive_link))
+
 ## 🌐 Live Demo
 [Click here to view the project](https://arundhathismartenergyclassroom.netlify.app/)
 
