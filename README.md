@@ -99,3 +99,7 @@ This project demonstrates a practical approach to intelligent classroom energy m
 ## 🌐 Live Demo
 [Click here to view the project](https://arundhathismartenergyclassroom.netlify.app/)
 
+## 🔗 Project Simulation
+[Click here to view the Wokwi simulation](https://wokwi.com/projects/457846440077390849)
+
+
