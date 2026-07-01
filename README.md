@@ -463,7 +463,8 @@ Smart-Zonal-Energy-Optimization/
 
 | Circuit Diagram |
 |---|---|
-| ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/ee4a4194-0654-4526-b88d-547a175e0164" />) |
+| ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/43188819-6e70-48a3-8016-14428d27fdab" />
+) |
 
 </div>
 
