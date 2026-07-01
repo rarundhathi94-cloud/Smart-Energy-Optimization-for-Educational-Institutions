@@ -633,7 +633,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](./LICEN
 
 <div align="center">
 
-**Built and maintained by [Arundhathi R](https://github.com/rarundhathi94)**
+**Built and maintained by [Arundhathi R](https://github.com/rarundhathi94-cloud)**
 
 *Easwari Engineering College*
 
