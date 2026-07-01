@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Zonal Energy Optimization — Live Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #dff0fb;
+    --panel: #f0f8ff;
+    --panel2: #d6ecf8;
+    --border: #7ab8d8;
+    --accent: #0077b6;
+    --accent2: #00875a;
+    --accent3: #e05a00;
+    --warn: #b88a00;
+    --red: #c00030;
+    --text: #0d2b4e;
+    --muted: #4a7090;
+    --glow: 0 0 20px rgba(0,119,182,0.3);
+    --glow2: 0 0 20px rgba(0,135,90,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(0,119,182,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(135,206,235,0.18) 0%, transparent 60%);
+  }
+
+  /* SCANLINE EFFECT */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.015) 2px,
+      rgba(0,0,0,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(224,242,254,0.97);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--accent2); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 1px;
+  }
+
+  .pulse-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 10px var(--accent2);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .clock {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  /* LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 320px 1fr 280px;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    padding: 16px 24px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* PANELS */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.6;
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-title::before {
+    content: '';
+    width: 3px; height: 12px;
+    background: var(--accent);
+    box-shadow: var(--glow);
+    display: block;
+  }
+
+  /* CLASSROOM MAP */
+  .classroom-panel {
+    grid-column: 2;
+    grid-row: 1 / 3;
+  }
+
+  .classroom-container {
+    background: #d4ecf7;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    min-height: 520px;
+  }
+
+  .classroom-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  /* DOOR */
+  .door-area {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    text-align: center;
+  }
+
+  .door {
+    width: 80px;
+    height: 12px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .door.open {
+    border-color: var(--accent2);
+    box-shadow: 0 0 10px rgba(0,135,90,0.35);
+  }
+
+  .door-label {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* IR SENSORS at door */
+  .ir-sensors {
+    display: flex;
+    justify-content: space-between;
+    width: 100px;
+    margin: 0 auto 4px;
+  }
+
+  .ir-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .ir-dot.triggered {
+    background: var(--warn);
+    box-shadow: 0 0 12px var(--warn);
+  }
+
+  .ir-beam {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--warn), transparent, var(--warn));
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .ir-beam.active { opacity: 0.5; }
+
+  /* ZONES */
+  .zones-grid {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 12px;
+    height: 420px;
+    margin-bottom: 60px;
+  }
+
+  .zone {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    position: relative;
+    transition: all 0.5s ease;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .zone.occupied {
+    border-color: rgba(0,119,182,0.6);
+    background: rgba(0,119,182,0.08);
+  }
+
+  .zone.active-light {
+    border-color: rgba(180,140,0,0.6);
+    background: rgba(180,140,0,0.06);
+    box-shadow: inset 0 0 30px rgba(180,140,0,0.10);
+  }
+
+  /* ZONE LIGHT EFFECT */
+  .zone-light-effect {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s;
+    background: radial-gradient(ellipse at 50% 0%, rgba(180,140,0,0.12) 0%, transparent 70%);
+  }
+
+  .zone.active-light .zone-light-effect { opacity: 1; }
+
+  .zone-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    min-width: 50px;
+    transition: color 0.3s;
+  }
+
+  .zone.active-light .zone-label { color: var(--warn); }
+  .zone.occupied .zone-label { color: var(--accent); }
+
+  /* SEATS */
+  .seats {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    flex: 1;
+  }
+
+  .seat {
+    width: 20px; height: 16px;
+    border-radius: 2px;
+    background: #c8e3f2;
+    border: 1px solid #7ab8d8;
+    transition: all 0.5s ease;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .seat.occupied-seat {
+    background: rgba(0,119,182,0.2);
+    border-color: rgba(0,119,182,0.6);
+    box-shadow: 0 0 4px rgba(0,119,182,0.35);
+  }
+
+  .seat.occupied-seat::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    border-radius: 1px;
+    background: rgba(0,119,182,0.45);
+    animation: seatPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes seatPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+  }
+
+  /* LIGHT FIXTURES */
+  .lights-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 80px;
+  }
+
+  .light-fixture {
+    width: 18px; height: 6px;
+    border-radius: 1px;
+    background: #c8e3f2;
+    border: 1px solid var(--border);
+    transition: all 0.5s ease;
+  }
+
+  .light-fixture.on {
+    background: #e6a200;
+    border-color: #c89000;
+    box-shadow: 0 0 8px rgba(180,140,0,0.7), 0 0 20px rgba(180,140,0,0.35);
+  }
+
+  /* FAN */
+  .fan-icon {
+    width: 24px; height: 24px;
+    position: relative;
+    min-width: 24px;
+  }
+
+  .fan-blade {
+    position: absolute;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fan-blade svg {
+    width: 20px; height: 20px;
+    fill: var(--muted);
+    transition: fill 0.3s;
+  }
+
+  .fan-icon.spinning svg {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 4px var(--accent));
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* PIR SENSOR */
+  .pir-sensor {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--muted);
+    border: 2px solid var(--border);
+    transition: all 0.3s;
+    min-width: 16px;
+    position: relative;
+  }
+
+  .pir-sensor::before {
+    content: 'PIR';
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .pir-sensor.detecting {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    box-shadow: 0 0 12px var(--accent2);
+  }
+
+  /* ZONE STATUS CHIPS */
+  .zone-status-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 60px;
+  }
+
+  .chip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .chip.on {
+    border-color: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    font-weight: bold;
+  }
+
+  .chip.light-chip.on { color: var(--warn); }
+  .chip.fan-chip.on { color: var(--accent); }
+
+  /* CONTROL PANEL LEFT */
+  .controls-panel {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  /* ENTRY/EXIT BUTTONS */
+  .entry-exit {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .btn {
+    padding: 12px 8px;
+    border: 1px solid;
+    border-radius: 3px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  .btn:active::before { width: 200px; height: 200px; }
+
+  .btn-entry {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  .btn-entry:hover {
+    background: rgba(0,135,90,0.12);
+    box-shadow: 0 0 15px rgba(0,135,90,0.35);
+  }
+
+  .btn-exit {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .btn-exit:hover {
+    background: rgba(180,0,40,0.1);
+    box-shadow: 0 0 15px rgba(180,0,40,0.3);
+  }
+
+  .btn-exit:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* COUNT DISPLAY */
+  .count-display {
+    background: #d4ecf7;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .count-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(0,119,182,0.6);
+    transition: all 0.3s;
+  }
+
+  .count-number.zero { color: var(--muted); text-shadow: none; }
+
+  .count-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 4px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* SENSOR READINGS */
+  .sensor-reading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 6px;
+    transition: all 0.3s;
+  }
+
+  .sensor-reading.active {
+    border-color: rgba(0,119,182,0.45);
+    background: rgba(0,119,182,0.08);
+  }
+
+  .sensor-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .sensor-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    transition: color 0.3s;
+  }
+
+  .sensor-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+  }
+
+  .sensor-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 1.5s ease;
+  }
+
+  /* SYSTEM STATUS PANEL */
+  .status-panel {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+
+  /* SYSTEM STATE */
+  .system-state {
+    padding: 12px;
+    border-radius: 4px;
+    text-align: center;
+    margin-bottom: 12px;
+    border: 1px solid;
+    transition: all 0.5s;
+  }
+
+  .system-state.state-empty {
+    border-color: var(--border);
+    background: rgba(122,184,216,0.2);
+  }
+
+  .system-state.state-active {
+    border-color: var(--accent);
+    background: rgba(0,119,182,0.10);
+    box-shadow: 0 0 20px rgba(0,119,182,0.12);
+  }
+
+  .system-state.state-recovery {
+    border-color: var(--warn);
+    background: rgba(180,140,0,0.08);
+    animation: warningPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes warningPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(180,140,0,0.25); }
+    50% { box-shadow: 0 0 25px rgba(180,140,0,0.45); }
+  }
+
+  .state-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .state-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* EVENT LOG */
+  .event-log {
+    height: 200px;
+    overflow-y: auto;
+    background: #d4ecf7;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    scroll-behavior: smooth;
+  }
+
+  .event-log::-webkit-scrollbar { width: 3px; }
+  .event-log::-webkit-scrollbar-track { background: transparent; }
+  .event-log::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .log-entry {
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(26,58,92,0.5);
+    display: flex;
+    gap: 8px;
+    animation: fadeInLog 0.3s ease;
+  }
+
+  @keyframes fadeInLog {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .log-time { color: var(--muted); min-width: 50px; }
+  .log-msg { color: var(--text); }
+  .log-entry.entry-event .log-msg { color: var(--accent2); }
+  .log-entry.exit-event .log-msg { color: var(--red); }
+  .log-entry.warn-event .log-msg { color: var(--warn); }
+  .log-entry.system-event .log-msg { color: var(--accent); }
+
+  /* ENERGY METER */
+  .energy-display {
+    background: #d4ecf7;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .energy-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .energy-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent2);
+    text-shadow: 0 0 20px rgba(0,135,90,0.45);
+  }
+
+  .energy-unit {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .energy-saved {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    margin-top: 4px;
+  }
+
+  /* SCENARIO BUTTONS */
+  .scenario-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scenario-btn:hover {
+    border-color: var(--accent);
+    background: rgba(0,119,182,0.08);
+    color: var(--accent);
+  }
+
+  .scenario-btn .s-icon { font-size: 14px; }
+
+  /* OCCUPANCY CONFIDENCE */
+  .confidence-bar-container {
+    margin: 8px 0;
+  }
+
+  .confidence-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .confidence-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .confidence-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease, background 0.5s;
+  }
+
+  /* ALERTS */
+  .alert-box {
+    padding: 8px 10px;
+    border-radius: 3px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    margin-bottom: 6px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeInLog 0.3s ease;
+  }
+
+  .alert-box.info { border-color: rgba(0,119,182,0.45); color: var(--accent); background: rgba(0,119,182,0.08); }
+  .alert-box.warn { border-color: rgba(180,140,0,0.45); color: var(--warn); background: rgba(180,140,0,0.06); }
+  .alert-box.success { border-color: rgba(0,135,90,0.45); color: var(--accent2); background: rgba(0,135,90,0.08); }
+  .alert-box.danger { border-color: rgba(180,0,40,0.45); color: var(--red); background: rgba(180,0,40,0.06); }
+
+  /* POWER FAILURE OVERLAY */
+  .power-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(180,210,230,0.95);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .power-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .power-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--red);
+    letter-spacing: 4px;
+    animation: blink 0.5s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  .power-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .recovery-bar {
+    width: 300px;
+    height: 4px;
+    background: #7ab8d8;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .recovery-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+
+  /* BOTTOM STATS BAR */
+  .stats-bar {
+    grid-column: 1 / 4;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+
+  .stat-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* CO2 GAUGE */
+  .co2-gauge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+
+  .co2-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    transition: color 0.5s;
+  }
+
+  .co2-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .co2-status {
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: bold;
+  }
+
+  .tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-family: 'Share Tech Mono', monospace;
+    white-space: nowrap;
+    color: var(--text);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .seat:hover .tooltip { opacity: 1; }
+
+  /* RESPONSIVE ADJUSTMENTS */
+  @media (max-width: 1200px) {
+    .main { grid-template-columns: 280px 1fr 250px; }
+  }
+
+  /* NOTIFICATION TOAST */
+  .toast {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    z-index: 500;
+    max-width: 280px;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    border-left: 3px solid var(--accent);
+  }
+
+  .toast.show { transform: translateX(0); }
+  .toast.warn-toast { border-left-color: var(--warn); }
+  .toast.success-toast { border-left-color: var(--accent2); }
+  .toast.danger-toast { border-left-color: var(--red); }
+
+  .mode-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: 1px solid;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .mode-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1.5s infinite;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SZEOS <span>//</span> Smart Zonal Energy Optimization</div>
+  <div class="header-right">
+    <div class="status-badge">
+      <div class="pulse-dot"></div>
+      <span>LIVE SIMULATION</span>
+    </div>
+    <div class="clock" id="clock">00:00:00</div>
+  </div>
+</header>
+
+<div class="power-overlay" id="powerOverlay">
+  <div style="font-size:48px">⚡</div>
+  <div class="power-text">POWER FAILURE</div>
+  <div class="power-sub">INITIATING RECOVERY MODE...</div>
+  <div class="recovery-bar"><div class="recovery-fill" id="recoveryFill"></div></div>
+  <div class="power-sub" id="recoveryText">Loading last known state from EEPROM...</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="main">
+
+  <!-- LEFT: CONTROLS -->
+  <div class="panel controls-panel">
+    <div class="panel-title">Control Interface</div>
+
+    <div class="mode-indicator" id="modeIndicator" style="color: var(--muted); border-color: var(--border);">
+      <div class="mode-dot"></div>
+      <span id="modeText">STANDBY MODE</span>
+    </div>
+
+    <div class="count-display">
+      <div class="count-number zero" id="countDisplay">0</div>
+      <div class="count-label">OCCUPANCY COUNT</div>
+    </div>
+
+    <div class="entry-exit">
+      <button class="btn btn-entry" onclick="handleEntry()">
+        ▶ ENTRY<br><span style="font-size:8px; opacity:0.7">IR A→B</span>
+      </button>
+      <button class="btn btn-exit" id="exitBtn" onclick="handleExit()" disabled>
+        ◀ EXIT<br><span style="font-size:8px; opacity:0.7">IR B→A</span>
+      </button>
+    </div>
+
+    <!-- SENSORS -->
+    <div class="panel-title" style="margin-top:12px">Sensor Readings</div>
+
+    <div class="sensor-reading" id="co2-reading">
+      <div>
+        <div class="sensor-name">CO₂ LEVEL</div>
+        <div class="sensor-bar"><div class="sensor-bar-fill" id="co2Bar" style="width:25%"></div></div>
+      </div>
+      <div class="sensor-value" id="co2Val">420 ppm</div>
+    </div>
+
+    <div class="sensor-reading" id="sound-reading">
+      <div>
+        <div class="sensor-name">SOUND LEVEL</div>
+        <div class="sensor-bar"><div class="sensor-bar-fill" id="soundBar" style="width:5%"></div></div>
+      </div>
+      <div class="sensor-value" id="soundVal">12 dB</div>
+    </div>
+
+    <div class="sensor-reading" id="temp-reading">
+      <div>
+        <div class="sensor-name">TEMPERATURE</div>
+        <div class="sensor-bar"><div class="sensor-bar-fill" id="tempBar" style="width:30%; background: linear-gradient(90deg, #ff6b35, #c89000)"></div></div>
+      </div>
+      <div class="sensor-value" id="tempVal">28.4°C</div>
+    </div>
+
+    <!-- CO2 STATUS -->
+    <div class="co2-gauge" id="co2Gauge">
+      <div>
+        <div class="sensor-name">CO₂ TREND</div>
+      </div>
+      <div class="co2-value" id="co2TrendVal" style="color: var(--muted)">STABLE</div>
+    </div>
+
+    <!-- CONFIDENCE -->
+    <div style="margin-bottom:8px">
+      <div class="confidence-label">
+        <span>OCCUPANCY CONFIDENCE</span>
+        <span id="confPct">0%</span>
+      </div>
+      <div class="confidence-track">
+        <div class="confidence-fill" id="confFill" style="width:0%; background: var(--muted)"></div>
+      </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div id="alertsContainer"></div>
+
+    <!-- SCENARIOS -->
+    <div class="panel-title" style="margin-top:12px">Simulate Scenarios</div>
+    <button class="scenario-btn" onclick="simulateClassStart()"><span class="s-icon">🏫</span> Class Starts (30 students)</button>
+    <button class="scenario-btn" onclick="simulateMassExit()"><span class="s-icon">🚪</span> Mass Exit (bell rings)</button>
+    <button class="scenario-btn" onclick="simulatePowerFailure()"><span class="s-icon">⚡</span> Power Failure & Recovery</button>
+    <button class="scenario-btn" onclick="simulateSilentExam()"><span class="s-icon">📝</span> Silent Exam Mode</button>
+    <button class="scenario-btn" onclick="simulateWindows()"><span class="s-icon">🌬️</span> Window Ventilation</button>
+    <button class="scenario-btn" onclick="resetAll()"><span class="s-icon">↺</span> Reset System</button>
+  </div>
+
+  <!-- CENTER: CLASSROOM MAP -->
+  <div class="panel classroom-panel">
+    <div class="panel-title">Classroom Zonal Map — Real-Time View</div>
+
+    <div class="classroom-container">
+      <div class="classroom-label">EASWARI ENGINEERING COLLEGE — CLASSROOM A204</div>
+
+      <!-- BLACKBOARD at top -->
+      <div style="height: 20px; background: #0d2a1a; border: 1px solid #1a4a2a; border-radius: 2px; margin-bottom: 16px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:9px; color:#2a6a3a; font-family: 'Share Tech Mono', monospace; letter-spacing:2px;">BLACKBOARD</span>
+      </div>
+
+      <div class="zones-grid">
+        <!-- ZONE 1: FRONT -->
+        <div class="zone" id="zone1">
+          <div class="zone-light-effect"></div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+            <div class="lights-row">
+              <div class="light-fixture" id="z1l1"></div>
+              <div class="light-fixture" id="z1l2"></div>
+              <div class="light-fixture" id="z1l3"></div>
+            </div>
+            <div class="fan-icon" id="z1fan">
+              <div class="fan-blade">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C10.3 2 9 3.3 9 5v5.1C8 9.4 7.1 8.5 6 8.1c-1.8-.5-3.7.5-4.3 2.3-.5 1.8.5 3.7 2.3 4.3 1 .3 2 .1 2.8-.4L9.7 17c-.5.6-.8 1.3-.7 2.1.1 1.9 1.7 3.3 3.6 3.2 1.9-.1 3.3-1.7 3.2-3.6-.1-.8-.4-1.5-1-2l2.6-2.7c.8.5 1.8.7 2.8.4 1.8-.6 2.8-2.5 2.3-4.3-.6-1.8-2.5-2.8-4.3-2.3-1.1.4-2 1.3-2.3 2.4V5c0-1.7-1.3-3-3-3z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="pir-sensor" id="z1pir" title="PIR Zone 1"></div>
+            <div class="zone-label">ZONE 1<br><span style="font-size:8px; opacity:0.6">FRONT</span></div>
+          </div>
+          <div class="seats" id="seats-zone1"><!-- filled by JS --></div>
+          <div class="zone-status-chips">
+            <div class="chip light-chip" id="z1-lchip">LIGHT</div>
+            <div class="chip fan-chip" id="z1-fchip">FAN</div>
+            <div class="chip" id="z1-count" style="color:var(--accent)">0 PPL</div>
+          </div>
+        </div>
+
+        <!-- ZONE 2: MIDDLE -->
+        <div class="zone" id="zone2">
+          <div class="zone-light-effect"></div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+            <div class="lights-row">
+              <div class="light-fixture" id="z2l1"></div>
+              <div class="light-fixture" id="z2l2"></div>
+              <div class="light-fixture" id="z2l3"></div>
+            </div>
+            <div class="fan-icon" id="z2fan">
+              <div class="fan-blade">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C10.3 2 9 3.3 9 5v5.1C8 9.4 7.1 8.5 6 8.1c-1.8-.5-3.7.5-4.3 2.3-.5 1.8.5 3.7 2.3 4.3 1 .3 2 .1 2.8-.4L9.7 17c-.5.6-.8 1.3-.7 2.1.1 1.9 1.7 3.3 3.6 3.2 1.9-.1 3.3-1.7 3.2-3.6-.1-.8-.4-1.5-1-2l2.6-2.7c.8.5 1.8.7 2.8.4 1.8-.6 2.8-2.5 2.3-4.3-.6-1.8-2.5-2.8-4.3-2.3-1.1.4-2 1.3-2.3 2.4V5c0-1.7-1.3-3-3-3z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="pir-sensor" id="z2pir" title="PIR Zone 2"></div>
+            <div class="zone-label">ZONE 2<br><span style="font-size:8px; opacity:0.6">MIDDLE</span></div>
+          </div>
+          <div class="seats" id="seats-zone2"></div>
+          <div class="zone-status-chips">
+            <div class="chip light-chip" id="z2-lchip">LIGHT</div>
+            <div class="chip fan-chip" id="z2-fchip">FAN</div>
+            <div class="chip" id="z2-count" style="color:var(--accent)">0 PPL</div>
+          </div>
+        </div>
+
+        <!-- ZONE 3: BACK -->
+        <div class="zone" id="zone3">
+          <div class="zone-light-effect"></div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
+            <div class="lights-row">
+              <div class="light-fixture" id="z3l1"></div>
+              <div class="light-fixture" id="z3l2"></div>
+              <div class="light-fixture" id="z3l3"></div>
+            </div>
+            <div class="fan-icon" id="z3fan">
+              <div class="fan-blade">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2C10.3 2 9 3.3 9 5v5.1C8 9.4 7.1 8.5 6 8.1c-1.8-.5-3.7.5-4.3 2.3-.5 1.8.5 3.7 2.3 4.3 1 .3 2 .1 2.8-.4L9.7 17c-.5.6-.8 1.3-.7 2.1.1 1.9 1.7 3.3 3.6 3.2 1.9-.1 3.3-1.7 3.2-3.6-.1-.8-.4-1.5-1-2l2.6-2.7c.8.5 1.8.7 2.8.4 1.8-.6 2.8-2.5 2.3-4.3-.6-1.8-2.5-2.8-4.3-2.3-1.1.4-2 1.3-2.3 2.4V5c0-1.7-1.3-3-3-3z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="pir-sensor" id="z3pir" title="PIR Zone 3"></div>
+            <div class="zone-label">ZONE 3<br><span style="font-size:8px; opacity:0.6">BACK</span></div>
+          </div>
+          <div class="seats" id="seats-zone3"></div>
+          <div class="zone-status-chips">
+            <div class="chip light-chip" id="z3-lchip">LIGHT</div>
+            <div class="chip fan-chip" id="z3-fchip">FAN</div>
+            <div class="chip" id="z3-count" style="color:var(--accent)">0 PPL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOOR AREA at bottom -->
+      <div class="door-area">
+        <div class="ir-sensors" style="position:relative">
+          <div class="ir-dot" id="irA"></div>
+          <div class="ir-beam" id="irBeam"></div>
+          <div class="ir-dot" id="irB"></div>
+        </div>
+        <div class="door" id="doorEl">DOOR</div>
+        <div class="door-label" id="doorStatus">CLOSED</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: STATUS & LOG -->
+  <div class="panel status-panel">
+    <div class="panel-title">System Status</div>
+
+    <div class="system-state state-empty" id="systemState">
+      <div class="state-icon">🔴</div>
+      <div class="state-text" id="stateText">SYSTEM IDLE</div>
+    </div>
+
+    <div class="panel-title">Energy Monitor</div>
+    <div class="energy-display">
+      <div class="energy-title">ACTIVE POWER DRAW</div>
+      <div><span class="energy-value" id="powerDraw">0</span> <span class="energy-unit">W</span></div>
+      <div class="energy-saved">💚 SAVED: <span id="energySaved">0</span> W vs full load</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:12px">
+      <div class="energy-display" style="margin-bottom:0">
+        <div class="energy-title">ZONES ON</div>
+        <div><span class="energy-value" id="zonesOn" style="font-size:18px">0</span><span class="energy-unit">/3</span></div>
+      </div>
+      <div class="energy-display" style="margin-bottom:0">
+        <div class="energy-title">LOADS OFF</div>
+        <div><span class="energy-value" id="loadsOff" style="font-size:18px; color:var(--accent2)">6</span><span class="energy-unit">/6</span></div>
+      </div>
+    </div>
+
+    <div class="panel-title">Mode Status</div>
+    <div id="modeStatusBox" style="margin-bottom:12px">
+      <div class="alert-box info"><span>⚡</span><span>System in Standby</span></div>
+    </div>
+
+    <div class="panel-title">Event Log</div>
+    <div class="event-log" id="eventLog">
+      <div class="log-entry system-event"><span class="log-time">00:00:00</span><span class="log-msg">System initialized. All loads OFF.</span></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM STATS -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-num" id="totalEntries">0</div>
+      <div class="stat-label">TOTAL ENTRIES</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="totalExits">0</div>
+      <div class="stat-label">TOTAL EXITS</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="peakOcc">0</div>
+      <div class="stat-label">PEAK OCCUPANCY</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="energySavedTotal" style="color:var(--accent2)">0W</div>
+      <div class="stat-label">ENERGY SAVED</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="driftCorrections">0</div>
+      <div class="stat-label">DRIFT CORRECTIONS</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="systemAccuracy" style="color:var(--accent2)">100%</div>
+      <div class="stat-label">SYSTEM ACCURACY</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== STATE =====
+const state = {
+  count: 0,
+  zones: [
+    { id: 1, pir: false, light: false, fan: false, people: 0 },
+    { id: 2, pir: false, light: false, fan: false, people: 0 },
+    { id: 3, pir: false, light: false, fan: false, people: 0 },
+  ],
+  co2: 420,
+  co2Trend: 'stable',
+  sound: 12,
+  temp: 28.4,
+  doorOpen: false,
+  systemMode: 'standby', // standby, active, recovery, exam, drift
+  totalEntries: 0,
+  totalExits: 0,
+  peakOcc: 0,
+  driftCorrections: 0,
+  windowsOpen: false,
+  eepromCount: 0,
+  energySavedTotal: 0,
+  startTime: Date.now(),
+};
+
+const MAX_LOAD = 770; // watts full load
+const PER_ZONE_LOAD = 256; // per zone lights+fan
+
+// ===== INIT SEATS =====
+function initSeats() {
+  ['zone1','zone2','zone3'].forEach((zId, zi) => {
+    const container = document.getElementById('seats-' + zId);
+    container.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+      const s = document.createElement('div');
+      s.className = 'seat';
+      s.id = `seat-z${zi+1}-${i}`;
+      s.title = `Zone ${zi+1} Seat ${i+1}`;
+      container.appendChild(s);
+    }
+  });
+}
+initSeats();
+
+// ===== CLOCK =====
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    now.toTimeString().slice(0,8);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ===== LOG =====
+function log(msg, type = 'system') {
+  const log = document.getElementById('eventLog');
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${type}-event`;
+  const now = new Date().toTimeString().slice(0,8);
+  entry.innerHTML = `<span class="log-time">${now}</span><span class="log-msg">${msg}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+  // keep log size manageable
+  while (log.children.length > 60) log.removeChild(log.firstChild);
+}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type}-toast show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ===== IR SENSORS =====
+function flashIR(direction) {
+  const irA = document.getElementById('irA');
+  const irB = document.getElementById('irB');
+  const beam = document.getElementById('irBeam');
+  const door = document.getElementById('doorEl');
+  const doorStatus = document.getElementById('doorStatus');
+
+  irA.classList.add('triggered');
+  irB.classList.add('triggered');
+  beam.classList.add('active');
+  door.classList.add('open');
+  doorStatus.textContent = direction === 'entry' ? 'ENTRY DETECTED' : 'EXIT DETECTED';
+
+  setTimeout(() => {
+    irA.classList.remove('triggered');
+    irB.classList.remove('triggered');
+    beam.classList.remove('active');
+    door.classList.remove('open');
+    doorStatus.textContent = 'CLOSED';
+  }, 600);
+}
+
+// ===== ENTRY/EXIT =====
+function handleEntry(silent = false) {
+  flashIR('entry');
+  state.count++;
+  state.eepromCount = state.count;
+  state.totalEntries++;
+  if (state.count > state.peakOcc) state.peakOcc = state.count;
+
+  // assign to a zone
+  const zi = Math.min(2, Math.floor((state.count - 1) / 11));
+  state.zones[zi].people++;
+  state.zones[zi].pir = true;
+
+  if (!silent) {
+    log(`Student entered. Count: ${state.count} | Zone ${zi+1} active`, 'entry');
+    showToast(`↗ Entry detected — Count: ${state.count}`, 'success');
+  }
+  updateAll();
+  if (!silent) triggerPIR(zi);
+}
+
+function handleExit(silent = false) {
+  if (state.count <= 0) return;
+  flashIR('exit');
+  state.count--;
+  state.eepromCount = state.count;
+  state.totalExits++;
+
+  // remove from highest zone
+  for (let i = 2; i >= 0; i--) {
+    if (state.zones[i].people > 0) {
+      state.zones[i].people--;
+      if (state.zones[i].people === 0) state.zones[i].pir = false;
+      break;
+    }
+  }
+
+  if (!silent) {
+    log(`Student exited. Count: ${state.count}`, 'exit');
+    showToast(`↙ Exit detected — Count: ${state.count}`, 'warn');
+  }
+  updateAll();
+}
+
+function triggerPIR(zoneIdx, duration = 2000) {
+  state.zones[zoneIdx].pir = true;
+  updateZoneVisuals();
+  setTimeout(() => {
+    if (state.zones[zoneIdx].people === 0) {
+      state.zones[zoneIdx].pir = false;
+      updateZoneVisuals();
+    }
+  }, duration);
+}
+
+// ===== UPDATE ALL =====
+function updateAll() {
+  updateCountDisplay();
+  updateZoneVisuals();
+  updateSensors();
+  updateSystemState();
+  updateEnergy();
+  updateStats();
+  updateConfidence();
+  saveToEEPROM();
+}
+
+function updateCountDisplay() {
+  const el = document.getElementById('countDisplay');
+  el.textContent = state.count;
+  el.className = 'count-number' + (state.count === 0 ? ' zero' : '');
+
+  const exitBtn = document.getElementById('exitBtn');
+  exitBtn.disabled = state.count <= 0;
+}
+
+function updateZoneVisuals() {
+  state.zones.forEach((zone, i) => {
+    const zi = i + 1;
+    const zoneEl = document.getElementById(`zone${zi}`);
+    const pirEl = document.getElementById(`z${zi}pir`);
+    const fanEl = document.getElementById(`z${zi}fan`);
+    const lchip = document.getElementById(`z${zi}-lchip`);
+    const fchip = document.getElementById(`z${zi}-fchip`);
+    const countChip = document.getElementById(`z${zi}-count`);
+
+    const shouldActivate = state.count > 0 && (zone.people > 0 || zone.pir);
+    zone.light = shouldActivate;
+    zone.fan = shouldActivate;
+
+    // Zone class
+    zoneEl.className = 'zone' + (zone.people > 0 ? ' occupied' : '') + (shouldActivate ? ' active-light' : '');
+
+    // PIR
+    pirEl.className = 'pir-sensor' + (zone.pir ? ' detecting' : '');
+
+    // Fan
+    fanEl.className = 'fan-icon' + (zone.fan ? ' spinning' : '');
+
+    // Lights
+    ['1','2','3'].forEach(n => {
+      document.getElementById(`z${zi}l${n}`).className = 'light-fixture' + (zone.light ? ' on' : '');
+    });
+
+    // Chips
+    lchip.className = 'chip light-chip' + (zone.light ? ' on' : '');
+    lchip.textContent = zone.light ? '💡 ON' : 'LIGHT';
+    fchip.className = 'chip fan-chip' + (zone.fan ? ' on' : '');
+    fchip.textContent = zone.fan ? '💨 ON' : 'FAN';
+    countChip.textContent = zone.people + ' PPL';
+
+    // Seats
+    const seats = document.querySelectorAll(`#seats-zone${zi} .seat`);
+    seats.forEach((seat, si) => {
+      seat.className = 'seat' + (si < zone.people ? ' occupied-seat' : '');
+    });
+  });
+}
+
+function updateSensors() {
+  const occ = state.count;
+
+  // CO2
+  let targetCO2;
+  if (state.windowsOpen) {
+    targetCO2 = 420 + occ * 5; // diluted by ventilation
+  } else {
+    targetCO2 = 420 + occ * 18;
+  }
+  state.co2 = state.co2 + (targetCO2 - state.co2) * 0.05;
+  const co2 = Math.round(state.co2);
+  document.getElementById('co2Val').textContent = co2 + ' ppm';
+  const co2Pct = Math.min(100, ((co2 - 400) / 1200) * 100);
+  document.getElementById('co2Bar').style.width = co2Pct + '%';
+
+  const co2Color = co2 > 1000 ? 'var(--red)' : co2 > 700 ? 'var(--warn)' : 'var(--accent)';
+  document.getElementById('co2Val').style.color = co2Color;
+
+  // CO2 trend
+  if (state.windowsOpen) {
+    state.co2Trend = 'VENTILATED';
+    document.getElementById('co2TrendVal').style.color = 'var(--warn)';
+  } else if (occ > 5) {
+    state.co2Trend = 'RISING ↑';
+    document.getElementById('co2TrendVal').style.color = 'var(--red)';
+  } else if (occ === 0) {
+    state.co2Trend = 'FALLING ↓';
+    document.getElementById('co2TrendVal').style.color = 'var(--accent2)';
+  } else {
+    state.co2Trend = 'STABLE';
+    document.getElementById('co2TrendVal').style.color = 'var(--muted)';
+  }
+  document.getElementById('co2TrendVal').textContent = state.co2Trend;
+
+  // Sound
+  let targetSound = 12 + occ * 3.5;
+  if (state.systemMode === 'exam') targetSound = 12 + occ * 0.8;
+  state.sound = state.sound + (targetSound - state.sound) * 0.1;
+  const sound = Math.round(state.sound);
+  document.getElementById('soundVal').textContent = sound + ' dB';
+  document.getElementById('soundBar').style.width = Math.min(100, sound * 1.2) + '%';
+
+  // Temp
+  state.temp = 28 + occ * 0.06;
+  document.getElementById('tempVal').textContent = state.temp.toFixed(1) + '°C';
+  document.getElementById('tempBar').style.width = Math.min(100, (state.temp - 24) * 20) + '%';
+}
+
+function updateSystemState() {
+  const stateEl = document.getElementById('systemState');
+  const stateText = document.getElementById('stateText');
+  const modeInd = document.getElementById('modeIndicator');
+  const modeText = document.getElementById('modeText');
+  const modeBox = document.getElementById('modeStatusBox');
+
+  if (state.count === 0) {
+    stateEl.className = 'system-state state-empty';
+    stateEl.querySelector('.state-icon').textContent = '🔴';
+    stateText.textContent = 'SYSTEM IDLE — NO OCCUPANCY';
+    state.systemMode = 'standby';
+    modeInd.style.color = 'var(--muted)';
+    modeInd.style.borderColor = 'var(--border)';
+    modeText.textContent = 'STANDBY MODE';
+    modeBox.innerHTML = '<div class="alert-box info"><span>⚡</span><span>System in Standby — All loads OFF</span></div>';
+  } else if (state.systemMode === 'recovery') {
+    stateEl.className = 'system-state state-recovery';
+    stateEl.querySelector('.state-icon').textContent = '⚠️';
+    stateText.textContent = 'RECOVERY MODE — VALIDATING';
+    modeInd.style.color = 'var(--warn)';
+    modeInd.style.borderColor = 'var(--warn)';
+    modeText.textContent = 'RECOVERY MODE';
+    modeBox.innerHTML = '<div class="alert-box warn"><span>🔄</span><span>Restoring state from EEPROM...</span></div>';
+  } else if (state.systemMode === 'exam') {
+    stateEl.className = 'system-state state-active';
+    stateEl.querySelector('.state-icon').textContent = '📝';
+    stateText.textContent = `EXAM MODE — ${state.count} STUDENTS`;
+    modeInd.style.color = 'var(--warn)';
+    modeInd.style.borderColor = 'var(--warn)';
+    modeText.textContent = 'EXAM / TIME-LOCK MODE';
+    modeBox.innerHTML = '<div class="alert-box warn"><span>⏱</span><span>Time-lock active. Loads persist despite low PIR.</span></div>';
+  } else {
+    stateEl.className = 'system-state state-active';
+    stateEl.querySelector('.state-icon').textContent = '🟢';
+    stateText.textContent = `ACTIVE — ${state.count} OCCUPANTS`;
+    state.systemMode = 'active';
+    modeInd.style.color = 'var(--accent2)';
+    modeInd.style.borderColor = 'var(--accent2)';
+    modeText.textContent = 'CLASS MODE — 08:30-16:30';
+    modeBox.innerHTML = '<div class="alert-box success"><span>✓</span><span>Zonal control active. Energy optimized.</span></div>';
+  }
+}
+
+function updateEnergy() {
+  const activeZones = state.zones.filter(z => z.light).length;
+  const activePower = activeZones * PER_ZONE_LOAD;
+  const savedPower = MAX_LOAD - activePower;
+
+  document.getElementById('powerDraw').textContent = activePower;
+  document.getElementById('energySaved').textContent = savedPower;
+  document.getElementById('zonesOn').textContent = activeZones;
+  document.getElementById('loadsOff').textContent = (3 - activeZones) * 2;
+
+  state.energySavedTotal += savedPower * (1/3600); // per second
+}
+
+function updateStats() {
+  document.getElementById('totalEntries').textContent = state.totalEntries;
+  document.getElementById('totalExits').textContent = state.totalExits;
+  document.getElementById('peakOcc').textContent = state.peakOcc;
+  document.getElementById('energySavedTotal').textContent = Math.round(state.energySavedTotal) + 'W';
+  document.getElementById('driftCorrections').textContent = state.driftCorrections;
+
+  // accuracy
+  const errors = state.driftCorrections;
+  const total = state.totalEntries + state.totalExits;
+  const accuracy = total === 0 ? 100 : Math.max(85, 100 - (errors / total * 5));
+  document.getElementById('systemAccuracy').textContent = accuracy.toFixed(0) + '%';
+}
+
+function updateConfidence() {
+  // confidence based on how many sensors agree
+  let score = 0;
+  const occ = state.count > 0;
+
+  if (occ) score += 40; // entry counter says occupied
+  const pirActive = state.zones.some(z => z.pir);
+  if (pirActive) score += 20;
+  if (state.co2 > 600) score += 20;
+  if (state.sound > 25) score += 10;
+  if (!state.windowsOpen) score += 10;
+
+  const pct = occ ? Math.min(95, score) : 0;
+
+  document.getElementById('confPct').textContent = pct + '%';
+  const fill = document.getElementById('confFill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct > 70 ? 'linear-gradient(90deg, var(--accent2), var(--accent))' :
+                          pct > 40 ? 'linear-gradient(90deg, var(--warn), var(--accent))' :
+                          'var(--muted)';
+}
+
+// ===== EEPROM SIMULATION =====
+function saveToEEPROM() {
+  // Simulates writing to EEPROM
+  state.eepromCount = state.count;
+}
+
+// ===== SCENARIOS =====
+function simulateClassStart() {
+  log('=== CLASS BELL RINGS — STUDENTS ENTERING ===', 'system');
+  showToast('📚 Class starting — 30 students entering', 'success');
+  state.systemMode = 'active';
+
+  let entered = 0;
+  const interval = setInterval(() => {
+    handleEntry(true);
+    entered++;
+    if (entered >= 30) {
+      clearInterval(interval);
+      log(`Class full: ${state.count} students. All 3 zones activated.`, 'system');
+      showToast(`✓ All 30 students in. Energy optimized.`, 'success');
+      // trigger all PIRs
+      state.zones.forEach((z, i) => { z.pir = true; });
+      updateAll();
+    }
+  }, 120);
+}
+
+function simulateMassExit() {
+  if (state.count === 0) {
+    showToast('No students to exit!', 'warn');
+    return;
+  }
+  log('=== BELL RINGS — MASS EXIT EVENT ===', 'warn');
+  showToast('🔔 Bell rings! Mass exit — IR may miss some counts!', 'warn');
+
+  const leaving = state.count;
+  let exited = 0;
+
+  // Simulate drift: miss 2-4 people due to side-by-side exit
+  const missed = Math.min(4, Math.floor(leaving * 0.08));
+  log(`⚠ DRIFT DETECTED: IR missed ~${missed} simultaneous exits`, 'warn');
+
+  const interval = setInterval(() => {
+    handleExit(true);
+    exited++;
+    if (exited >= leaving - missed) {
+      clearInterval(interval);
+      if (missed > 0) {
+        log(`Counter shows: ${state.count} (actual: 0). Drift of ${missed} detected.`, 'warn');
+        // Trigger CO2 correction after delay
+        setTimeout(() => {
+          log('CO₂ trend FALLING + PIR=0 + Door closed → DRIFT CORRECTION triggered!', 'system');
+          state.driftCorrections++;
+          const oldCount = state.count;
+          state.count = 0;
+          state.zones.forEach(z => { z.people = 0; z.pir = false; });
+          updateAll();
+          log(`Count corrected: ${oldCount} → 0. System reset.`, 'system');
+          showToast(`✓ Auto drift corrected: ${oldCount} → 0`, 'success');
+        }, 3000);
+      } else {
+        log(`All ${leaving} students exited. Room empty.`, 'system');
+      }
+      updateAll();
+    }
+  }, 80);
+}
+
+function simulatePowerFailure() {
+  const savedCount = state.count;
+  log('=== POWER FAILURE! 10-min outage ===', 'warn');
+  showToast('⚡ POWER FAILURE DETECTED!', 'danger');
+
+  const overlay = document.getElementById('powerOverlay');
+  const fill = document.getElementById('recoveryFill');
+  const recovText = document.getElementById('recoveryText');
+
+  overlay.classList.add('active');
+
+  const msgs = [
+    'Loading last known state from EEPROM...',
+    `Restoring occupancy count: ${savedCount}`,
+    'Entering POST-BOOT VALIDATION MODE...',
+    'Collecting PIR + CO₂ + Sound data...',
+    'Applying timetable constraints (Class Hours)...',
+    'Recovery complete. State validated.'
+  ];
+
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 17;
+    fill.style.width = Math.min(100, progress) + '%';
+    const msgIdx = Math.floor((progress / 100) * msgs.length);
+    recovText.textContent = msgs[Math.min(msgIdx, msgs.length - 1)];
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        state.systemMode = 'recovery';
+        log('RECOVERY: EEPROM count restored: ' + savedCount, 'system');
+        log('RECOVERY: Post-boot validation → Occupancy confirmed', 'system');
+        state.systemMode = state.count > 0 ? 'active' : 'standby';
+        updateAll();
+        showToast('✓ System recovered. State restored from EEPROM.', 'success');
+      }, 500);
+    }
+  }, 300);
+}
+
+function simulateSilentExam() {
+  if (state.count === 0) {
+    // add some students first
+    for (let i = 0; i < 20; i++) handleEntry(true);
+  }
+  state.systemMode = 'exam';
+  log('=== SILENT EXAM MODE ACTIVATED ===', 'warn');
+  log('PIR may show no motion. Time-lock engaged.', 'warn');
+  log('Entry-count PRIMARY anchor. Loads will NOT shut off.', 'system');
+  showToast('📝 Exam mode: Time-based lock active!', 'warn');
+
+  // Zero out PIR to simulate still students
+  state.zones.forEach(z => { z.pir = false; });
+  updateAll();
+
+  // But lights stay on due to time-lock
+  state.zones.forEach(z => { z.light = true; z.fan = true; });
+  updateZoneVisuals();
+}
+
+function simulateWindows() {
+  state.windowsOpen = !state.windowsOpen;
+  if (state.windowsOpen) {
+    log('=== WINDOWS OPENED — Ventilation active ===', 'warn');
+    log('CO₂ now unreliable as primary indicator.', 'warn');
+    log('System switching to: Entry-count + PIR + Sound validation.', 'system');
+    showToast('🌬️ Window ventilation — CO₂ bypassed', 'warn');
+
+    const alertsContainer = document.getElementById('alertsContainer');
+    alertsContainer.innerHTML = '<div class="alert-box warn"><span>🌬</span><span>CO₂ unreliable. Fallback mode active.</span></div>';
+  } else {
+    state.windowsOpen = false;
+    log('Windows closed. CO₂ sensor re-enabled as validation layer.', 'system');
+    showToast('CO₂ sensor re-enabled', 'success');
+    document.getElementById('alertsContainer').innerHTML = '';
+  }
+  updateAll();
+}
+
+function resetAll() {
+  state.count = 0;
+  state.eepromCount = 0;
+  state.zones.forEach(z => { z.pir = false; z.light = false; z.fan = false; z.people = 0; });
+  state.co2 = 420;
+  state.sound = 12;
+  state.temp = 28.4;
+  state.systemMode = 'standby';
+  state.windowsOpen = false;
+  document.getElementById('alertsContainer').innerHTML = '';
+  log('=== SYSTEM RESET ===', 'system');
+  showToast('System reset complete', '');
+  updateAll();
+}
+
+// ===== AUTO SIMULATION (ambient fluctuations) =====
+setInterval(() => {
+  if (state.count > 0) {
+    // Random PIR fluctuation
+    state.zones.forEach((zone, i) => {
+      if (zone.people > 0 && Math.random() < 0.3) {
+        zone.pir = true;
+        setTimeout(() => { if (zone.people > 0) zone.pir = false; }, 800);
+      }
+    });
+    updateZoneVisuals();
+  }
+  updateSensors();
+  updateEnergy();
+  updateStats();
+  updateConfidence();
+}, 2000);
+
+// Initial render
+updateAll();
+</script>
+</body>
+</html>
