@@ -447,22 +447,31 @@ Smart-Zonal-Energy-Optimization/
  
 <div align="center">
   
-| Wokwi Simulation |
-|---|---|
-| ![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/d715e787-4138-4f82-b517-d037aa0f841f" />
-) |
+**Wokwi Simulation**
  
-| Blynk Dashboard | Future Web Dashboard |
-|---|---|
-| ![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/a34ef2b5-41cd-432b-9c20-e531dfe222ff" />
-) | ![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/43ce61a3-ba2a-431a-91a6-6d25d8cc2408" />
-) |
+![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/c17422d3-3808-47d2-a07f-95c05cce1dcb" />
+)
  
-| System Architecture | Circuit Diagram |
-|---|---|
-| ![Architecture](<img width="628" height="883" alt="image" src="https://github.com/user-attachments/assets/41a7197f-8752-46ed-b5cb-196badefdf6d" />
-) | ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/b0f77530-6b25-48e7-bf4f-1d129b5e69bf" />
-) |
+**Blynk Dashboard**
+ 
+![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/74b9f564-f448-49fb-a67b-7420d4213cae" />
+)
+
+
+**Future Web Dashboard**
+ 
+![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/0a670ff1-cccb-42e8-a991-a592531cb03c" />
+)
+ 
+**System Architecture**
+ 
+![Architecture](<img width="314" height="442" alt="Screenshot 2026-07-01 083735" src="https://github.com/user-attachments/assets/dfc859da-989e-4282-982a-2ec024ec3fb0" />
+)
+ 
+**Circuit Diagram**
+ 
+![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/8f392ef7-e578-4d60-9b53-88f7f50068cc" />
+)
  
 </div>
 ---
