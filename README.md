@@ -438,40 +438,34 @@ Smart-Zonal-Energy-Optimization/
 └── docs/
     └── assets/                     # Screenshots, diagrams, and media (placeholders)
 ```
-
----
-
----
- 
 ## 🖼️ Screenshots
  
 <div align="center">
   
 **Wokwi Simulation**
  
-![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/c17422d3-3808-47d2-a07f-95c05cce1dcb" />
-)
+![Wokwi](docs/assets/wokwi.png)<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/694ac15d-919d-4d8e-85b5-3b59f2bc4362" />
+
  
 **Blynk Dashboard**
  
-![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/74b9f564-f448-49fb-a67b-7420d4213cae" />
-)
+![Blynk](docs/assets/blynk.png)<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/c0b11194-5e3d-4e20-b74a-bb25562b809d" />
 
-
+ 
 **Future Web Dashboard**
  
-![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/0a670ff1-cccb-42e8-a991-a592531cb03c" />
-)
+![Dashboard](docs/assets/dashboard.png)<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/51b9517a-c638-417a-b56e-ae9e7de04508" />
+
  
 **System Architecture**
  
-![Architecture](<img width="314" height="442" alt="Screenshot 2026-07-01 083735" src="https://github.com/user-attachments/assets/dfc859da-989e-4282-982a-2ec024ec3fb0" />
-)
+![Architecture](docs/assets/architecture.png)<img width="314" height="442" alt="Screenshot 2026-07-01 083735" src="https://github.com/user-attachments/assets/5f986e3d-d03d-407d-b974-8982b1e3d017" />
+
  
 **Circuit Diagram**
  
-![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/8f392ef7-e578-4d60-9b53-88f7f50068cc" />
-)
+![Circuit](docs/assets/circuit.png)<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/7438afc9-1b12-4fcc-b803-f21c2cfe239f" />
+
  
 </div>
 ---
