@@ -445,18 +445,25 @@ Smart-Zonal-Energy-Optimization/
 
 <div align="center">
 
-| Prototype (Breadboard) | Wokwi Simulation |
+ | Wokwi Simulation |
 |---|---|
-| ![Wokwi](https://drive.google.com/file/d/1jz9pfwyOGGtYfNQ_N5uUJPSfJt-bT345/view?usp=sharing) |
+| ![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/b85347e7-2bb2-49cd-a875-9bda95435748" />) |
 
-| Blynk Dashboard | Future Web Dashboard |
+| Blynk Dashboard |
 |---|---|
-| ![Blynk](https://drive.google.com/file/d/1gp9unLCzEikNKZ-UW8acI2xVpQ-bR_mx/view?usp=sharing) | ![Dashboard](https://drive.google.com/file/d/1c9ZyRpT30bpHMR-ARSilk8O5SNneVV1z/view?usp=sharing) |
+| ![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/184030c8-085a-4d9c-beb8-21e65ee6fd1c" />) |
 
-| System Architecture | Circuit Diagram |
+| Future Web Dashboard |
 |---|---|
-| ![Architecture](https://drive.google.com/file/d/1JkSjxxPqWXZoVW_TuQUOSzXlGmNwTp1P/view?usp=drive_link)) | ![Circuit](<img width="627" height="319" alt="Screenshot 2026-07-01 081544" src="https://github.com/user-attachments/assets/23fa22cf-4325-4d3b-bdb7-7d4a02bf5d19" />
-) |
+| ![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/1e3d1c0d-e958-4697-8ee9-62908993add7" />) |
+
+| System Architecture | 
+|---|---|
+| ![Architecture](<img width="314" height="442" alt="image" src="https://github.com/user-attachments/assets/3f9cc895-4029-43e8-928b-f1d6b19b5ff6" />) |
+
+| Circuit Diagram |
+|---|---|
+| ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/ee4a4194-0654-4526-b88d-547a175e0164" />) |
 
 </div>
 
