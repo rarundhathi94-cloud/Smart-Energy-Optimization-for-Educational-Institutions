@@ -441,33 +441,30 @@ Smart-Zonal-Energy-Optimization/
 
 ---
 
+---
+ 
 ## 🖼️ Screenshots
-
+ 
 <div align="center">
-
- | Wokwi Simulation |
+  
+| Wokwi Simulation |
 |---|---|
-| ![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/b85347e7-2bb2-49cd-a875-9bda95435748" />) |
-
-| Blynk Dashboard |
-|---|---|
-| ![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/184030c8-085a-4d9c-beb8-21e65ee6fd1c" />) |
-
-| Future Web Dashboard |
-|---|---|
-| ![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/1e3d1c0d-e958-4697-8ee9-62908993add7" />) |
-
-| System Architecture | 
-|---|---|
-| ![Architecture](<img width="314" height="442" alt="image" src="https://github.com/user-attachments/assets/3f9cc895-4029-43e8-928b-f1d6b19b5ff6" />) |
-
-| Circuit Diagram |
-|---|---|
-| ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/43188819-6e70-48a3-8016-14428d27fdab" />
+| ![Wokwi](<img width="956" height="499" alt="Screenshot 2026-07-01 075159" src="https://github.com/user-attachments/assets/d715e787-4138-4f82-b517-d037aa0f841f" />
 ) |
-
+ 
+| Blynk Dashboard | Future Web Dashboard |
+|---|---|
+| ![Blynk](<img width="737" height="443" alt="Screenshot 2026-07-01 075359" src="https://github.com/user-attachments/assets/a34ef2b5-41cd-432b-9c20-e531dfe222ff" />
+) | ![Dashboard](<img width="1908" height="1411" alt="screencapture-arundhathismartenergyclassroom-netlify-app-2026-06-30-20_20_06" src="https://github.com/user-attachments/assets/43ce61a3-ba2a-431a-91a6-6d25d8cc2408" />
+) |
+ 
+| System Architecture | Circuit Diagram |
+|---|---|
+| ![Architecture](<img width="628" height="883" alt="image" src="https://github.com/user-attachments/assets/41a7197f-8752-46ed-b5cb-196badefdf6d" />
+) | ![Circuit](<img width="627" height="319" alt="Circuit Diagram of szeos" src="https://github.com/user-attachments/assets/b0f77530-6b25-48e7-bf4f-1d129b5e69bf" />
+) |
+ 
 </div>
-
 ---
 
 ## 🎥 Demo Videos
