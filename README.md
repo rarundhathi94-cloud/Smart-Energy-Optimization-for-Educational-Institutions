@@ -447,15 +447,16 @@ Smart-Zonal-Energy-Optimization/
 
 | Prototype (Breadboard) | Wokwi Simulation |
 |---|---|
-| ![Prototype](docs/assets/prototype.png) | ![Wokwi](docs/assets/wokwi.png) |
+| ![Wokwi](https://drive.google.com/file/d/1jz9pfwyOGGtYfNQ_N5uUJPSfJt-bT345/view?usp=sharing) |
 
 | Blynk Dashboard | Future Web Dashboard |
 |---|---|
-| ![Blynk](docs/assets/blynk.png) | ![Dashboard](docs/assets/dashboard.png) |
+| ![Blynk](https://drive.google.com/file/d/1gp9unLCzEikNKZ-UW8acI2xVpQ-bR_mx/view?usp=sharing) | ![Dashboard](https://drive.google.com/file/d/1c9ZyRpT30bpHMR-ARSilk8O5SNneVV1z/view?usp=sharing) |
 
 | System Architecture | Circuit Diagram |
 |---|---|
-| ![Architecture](docs/assets/architecture.png) | ![Circuit](docs/assets/circuit.png) |
+| ![Architecture](https://drive.google.com/file/d/1JkSjxxPqWXZoVW_TuQUOSzXlGmNwTp1P/view?usp=drive_link)) | ![Circuit](<img width="627" height="319" alt="Screenshot 2026-07-01 081544" src="https://github.com/user-attachments/assets/23fa22cf-4325-4d3b-bdb7-7d4a02bf5d19" />
+) |
 
 </div>
 
