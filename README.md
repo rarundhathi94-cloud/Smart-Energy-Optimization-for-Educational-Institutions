@@ -472,9 +472,10 @@ Smart-Zonal-Energy-Optimization/
 
 ## 🎥 Demo Videos
 
-- 📹 **Prototype Demo (Breadboard)** — _placeholder link_
-- 📹 **Wokwi + Blynk Live Simulation** — _placeholder link_
-- 📹 **Future Dashboard Walkthrough** — _placeholder link_
+
+- [![Wokwi + Blynk Live Simulation and Future Dashboard Walkthrough](docs/assets/video-thumbnail.png)](https://drive.google.com/file/d/1ALiUKS7cBLk9zxlZeeRe2NPX5MbHXHNt/view?usp=sharing)
+
+
 
 ---
 
