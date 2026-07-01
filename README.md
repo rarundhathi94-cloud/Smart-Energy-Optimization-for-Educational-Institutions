@@ -356,7 +356,7 @@ sequenceDiagram
     end
 ```
 
-For a visual, animated version of this flow, see [`flowchart.html`]([./flowchart.html](https://arundhathiszeosflowchart.netlify.app/)).
+For a visual, animated version of this flow, see [`flowchart.html`](https://arundhathiszeosflowchart.netlify.app/).
 
 ---
 
@@ -399,7 +399,7 @@ LOOP every 500ms:
     print status to Serial
 ```
 
-This mirrors the real control flow implemented in [`sketch.ino`]([./sketch.ino](https://drive.google.com/file/d/1xM0ZcidOPXOIam1_6P-1hf-SqNVPdBX9/view?usp=drive_link)).
+This mirrors the real control flow implemented in [`sketch.ino`]((https://drive.google.com/file/d/1xM0ZcidOPXOIam1_6P-1hf-SqNVPdBX9/view?usp=drive_link)).
 
 ---
 
